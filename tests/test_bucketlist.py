@@ -79,14 +79,14 @@ class BucketlistTestCase(TestCase):
 
         # Edit created bucketlist
         resp = self.client.put(
-            '/bucketlists/{}'.format(result['id']),
+            "/bucketlists/{}".format(result["id"]),
             headers=dict(Authorization="Bearer " + access_token),
             data={
                 "name": "participate in 10,000km heart marathon race"
             })
         # Get details of edited bucketlist for confirmation
         result = self.client.get(
-            '/bucketlists/{}'.format(result['id']),
+            "/bucketlists/{}".format(result["id"]),
             headers=dict(Authorization="Bearer " + access_token))
         self.assertIn("10,000km heart marathon race", str(result.data))
         self.assertEqual(resp.status_code, 200)
@@ -106,13 +106,13 @@ class BucketlistTestCase(TestCase):
 
         # delete created bucketlist
         resp = self.client.delete(
-            '/bucketlists/{}'.format(result['id']),
+            "/bucketlists/{}".format(result["id"]),
             headers=dict(Authorization="Bearer " + access_token),)
         self.assertEqual(resp.status_code, 200)
 
         # confirm truly bucketlist has been deleted by accessing it
         resp = self.client.get(
-            '/bucketlists/1',
+            "/bucketlists/1",
             headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(resp.status_code, 404)
 
