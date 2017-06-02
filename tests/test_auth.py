@@ -51,3 +51,7 @@ class AuthTestCase(TestCase):
         self.assertEqual(result["message"],
                          "email/username unkown. Kindly register to continue")
         self.assertEqual(resp.status_code, 401)
+
+
+if __name__ == "__main__":
+    unittest.main()
