@@ -2,7 +2,7 @@
 
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
-from flask import request, jsonify, make_response
+from flask import request, jsonify, abort, make_response
 
 
 # local import
@@ -48,7 +48,7 @@ def create_app(config_name):
                         return make_response(response), 201
 
                 else:
-                    # GET all bucketlists by user
+                    # GET all bucketlist by user
                     bucketlists = BucketList.query.filter_by(
                         created_by=user_id)
                     results = []
@@ -69,6 +69,65 @@ def create_app(config_name):
                 response = {
                     "message": message
                 }
+                return make_response(jsonify(response)), 401
+
+    @app.route("/bucketlists/<int:id>", methods=["GET", "PUT", "DELETE"])
+    def bucketlist_manipulation(id, **kwargs):
+        # get the access token from the header
+        auth_header = request.headers.get("Authorization")
+        access_token = auth_header.split(" ")[1]
+
+        if access_token:
+            # decode token and get the User ID
+            user_id = User.decode_token(access_token)
+
+            if not isinstance(user_id, str):
+                # Get the bucketlist with the id specified from the URL
+                bucketlist = BucketList.query.filter_by(id=id).first()
+
+                if not bucketlist:
+                    # Raise an HTTPException with a 404 not found status code
+                    abort(404)
+
+                if request.method == "PUT":
+                    # Update bucketlist with new name
+                    name = str(request.data.get("name", ""))
+
+                    bucketlist.name = name
+                    bucketlist.save()
+
+                    response = {
+                        "id": bucketlist.id,
+                        "name": bucketlist.name,
+                        "date_created": bucketlist.date_created,
+                        "date_modified": bucketlist.date_modified,
+                        "created_by": bucketlist.created_by
+                    }
+                    return make_response(jsonify(response)), 200
+
+                elif request.method == "GET":
+                    # Fetch the specified bucketlist
+                    response = {
+                        "id": bucketlist.id,
+                        "name": bucketlist.name,
+                        "date_created": bucketlist.date_created,
+                        "date_modified": bucketlist.date_modified,
+                        "created_by": bucketlist.created_by
+                    }
+                    return make_response(jsonify(response)), 200
+
+                else:
+                    # request.method == "DELETE"
+                    # delete the bucketlist using our delete method
+                    bucketlist.delete()
+                    return {"message": "bucketlist {} deleted".
+                            format(bucketlist.id)}, 200
+
+            else:
+                # Unregistered User
+                message = user_id
+                response = {"message": message}
+                # return an error response, telling the user he is Unauthorized
                 return make_response(jsonify(response)), 401
 
     # import the authentication blueprint and register it on the app
