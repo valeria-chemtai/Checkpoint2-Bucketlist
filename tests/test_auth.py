@@ -1,9 +1,9 @@
-from unittest import TestCase
+import unittest
 import json
 from app import create_app, db
 
 
-class AuthTestCase(TestCase):
+class AuthTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client()
@@ -33,7 +33,7 @@ class AuthTestCase(TestCase):
         result = json.loads(resp.data.decode())
         self.assertEqual(resp.status_code, 202)
         self.assertEqual(
-            result["message", "Already Resgistered. Login Please"])
+            result["message"], "Already Resgistered. Login Please")
 
     def test_login_registered_user(self):
         """Test registered user successful login"""
@@ -49,7 +49,7 @@ class AuthTestCase(TestCase):
         resp = self.client.post("/auth/login", data=self.user_details)
         result = json.loads(resp.data.decode())
         self.assertEqual(result["message"],
-                         "email/username unkown. Kindly register to continue")
+                         "email/username unkown. Register to continue")
         self.assertEqual(resp.status_code, 401)
 
 
