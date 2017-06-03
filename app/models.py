@@ -12,8 +12,7 @@ class User(db.Model):
     email = db.Column(db.String(30), unique=True, nullable=False)
     password = db.Column(db.String(20))
     bucketlists = db.relationship(
-        "BucketList", order_by="BucketList.id", cascade="all, delete-orphan",
-        lazy="dynamic")
+        "BucketList", order_by="BucketList.id", cascade="all, delete-orphan")
 
     def __init__(self, email, username, password):
         self.email = email
