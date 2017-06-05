@@ -13,7 +13,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import BucketList, User
+    from app.models import User, BucketList, BucketListItem
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -130,7 +130,30 @@ def create_app(config_name):
                 # return an error response, telling the user he is Unauthorized
                 return make_response(jsonify(response)), 401
 
-    # import the authentication blueprint and register it on the app
+    @app.route("/bucketlists/<int:id>/items/", methods=["POST"])
+    def bucketlist_item(id, **kwargs):
+
+        bucketlist = BucketList.query.filter_by(id=id).first()
+
+        if not bucketlist:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        if request.method == "POST":
+            name = str(request.data.get("name", ""))
+            if name:
+                item = BucketListItem(name=name, bucketlist_id=id)
+                item.save()
+                response = jsonify({
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "bucketlist_id": id
+                })
+                return make_response(response), 201
+
+        # import the authentication blueprint and register it on the app
     from .auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
 
