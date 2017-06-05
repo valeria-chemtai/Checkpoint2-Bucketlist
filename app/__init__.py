@@ -132,26 +132,34 @@ def create_app(config_name):
 
     @app.route("/bucketlists/<int:id>/items/", methods=["POST"])
     def bucketlist_item(id, **kwargs):
+        auth_header = request.headers.get("Authorization")
+        access_token = auth_header.split(" ")[1]
 
-        bucketlist = BucketList.query.filter_by(id=id).first()
+        if access_token:
+            # decode token and get the User ID
+            user_id = User.decode_token(access_token)
 
-        if not bucketlist:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
+            if not isinstance(user_id, str):
 
-        if request.method == "POST":
-            name = str(request.data.get("name", ""))
-            if name:
-                item = BucketListItem(name=name, bucketlist_id=id)
-                item.save()
-                response = jsonify({
-                    "id": item.id,
-                    "name": item.name,
-                    "date_created": item.date_created,
-                    "date_modified": item.date_modified,
-                    "bucketlist_id": id
-                })
-                return make_response(response), 201
+                bucketlist = BucketList.query.filter_by(id=id).first()
+
+                if not bucketlist:
+                    # Raise an HTTPException with a 404 not found status code
+                    abort(404)
+
+                if request.method == "POST":
+                    name = str(request.data.get("name", ""))
+                    if name:
+                        item = BucketListItem(name=name, bucketlist_id=id)
+                        item.save()
+                        response = jsonify({
+                            "id": item.id,
+                            "name": item.name,
+                            "date_created": item.date_created,
+                            "date_modified": item.date_modified,
+                            "bucketlist_id": id
+                        })
+                        return make_response(response), 201
 
         # import the authentication blueprint and register it on the app
     from .auth import auth_blueprint

@@ -33,7 +33,7 @@ class BucketlistTestCase(unittest.TestCase):
         # result = json.loads(bucketlist.data.decode())
 
         resp = self.client.post("/bucketlists/1/items/", headers=dict(
-            Authorization="Bearer" + access_token), data=self.item)
+            Authorization="Bearer " + access_token), data=self.item)
         self.assertEqual(resp.status_code, 201)
         self.assertIn("Standard chartered marathon", str(resp.data))
 
@@ -50,7 +50,7 @@ class BucketlistTestCase(unittest.TestCase):
             Authorization="Bearer " + access_token),
             data=self.bucketlist)
         # create bucketlist item
-        bucketlist_item = self.client.post("/bucketlists/1/items/", headers=dict(Authorization="Bearer" + access_token), data=self.item)
+        bucketlist_item = self.client.post("/bucketlists/1/items/", headers=dict(Authorization="Bearer " + access_token), data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         # delete created bucketlist item
         resp = self.client.delete("/bucketlists/1/items/1",
@@ -75,7 +75,7 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.bucketlist)
         # create bucketlist item
         bucketlist_item = self.client.post(
-            "/bucketlists/1/items", headers=dict(Authorization="Bearer" + access_token), data=self.item)
+            "/bucketlists/1/items", headers=dict(Authorization="Bearer " + access_token), data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         resp = self.client.get(
             "/bucketlists/1/items/1",
