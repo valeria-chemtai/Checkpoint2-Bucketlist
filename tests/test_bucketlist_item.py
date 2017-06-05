@@ -37,6 +37,57 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertIn("Standard chartered marathon", str(resp.data))
 
+    def test_bucketlist_edit(self):
+        """Test bucketlist can be edited"""
+        self.client.post("/auth/register", data=self.user_details)
+        result = self.client.post("/auth/login", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+
+        bucketlist = self.client.post(
+            "/bucketlists/",
+            headers=dict(Authorization="Bearer " + access_token),
+            data=self.bucketlist)
+        result = json.loads(bucketlist.data.decode())
+
+        # Edit created bucketlist
+        resp = self.client.put(
+            "/bucketlists/{}".format(result["id"]),
+            headers=dict(Authorization="Bearer " + access_token),
+            data={
+                "name": "participate in 10,000km heart marathon race"
+            })
+        # Get details of edited bucketlist for confirmation
+        result = self.client.get(
+            "/bucketlists/{}".format(result["id"]),
+            headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn("10,000km heart marathon race", str(result.data))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_bucketlist_item_edit(self):
+        """Test edit bucketlist item by id"""
+        self.client.post("/auth/register", data=self.user_details)
+        # login user
+        result = self.client.post("/auth/login", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+        # create bucketlist
+        self.client.post('/bucketlists/', headers=dict(
+            Authorization="Bearer " + access_token),
+            data=self.bucketlist)
+        # create bucketlist item
+        bucketlist_item = self.client.post(
+            "/bucketlists/1/items/", headers=dict
+            (Authorization="Bearer " + access_token), data=self.item)
+        result = json.loads(bucketlist_item.data.decode())
+        resp = self.client.put(
+            "/bucketlists/1/items/1",
+            headers=dict(Authorization="Bearer " + access_token),
+            data={"name": "Stan Chart Marathon"})
+        result = self.client.get(
+            "/bucketlists/1/items/1",
+            headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("Standard chartered marathon", str(result.data))
+
     def test_bucketlist_item_deletion(self):
         """Test bucketlist item can be deleted"""
         # register user
@@ -50,38 +101,20 @@ class BucketlistTestCase(unittest.TestCase):
             Authorization="Bearer " + access_token),
             data=self.bucketlist)
         # create bucketlist item
-        bucketlist_item = self.client.post("/bucketlists/1/items/", headers=dict(Authorization="Bearer " + access_token), data=self.item)
+        bucketlist_item = self.client.post(
+            "/bucketlists/1/items/", headers=dict
+            (Authorization="Bearer " + access_token), data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         # delete created bucketlist item
         resp = self.client.delete("/bucketlists/1/items/1",
                                   headers=dict(
-                                      Authorization="Bearer " + access_token),)
+                                      Authorization="Bearer " + access_token))
         self.assertEqual(resp.status_code, 200)
         # confirm item has been deleted by accessing it
         resp = self.client.get(
             "/bucketlists/1/items/1", headers=dict(
                 Authorization="Bearer " + access_token))
         self.assertEqual(resp.status_code, 404)
-
-    def test_bucketlist_item_get_by_id(self):
-        """Test get bucketlist item by id"""
-        self.client.post("/auth/register", data=self.user_details)
-        # login user
-        result = self.client.post("/auth/login", data=self.user_details)
-        access_token = json.loads(result.data.decode())["access_token"]
-        # create bucketlist
-        self.client.post('/bucketlists/', headers=dict(
-            Authorization="Bearer " + access_token),
-            data=self.bucketlist)
-        # create bucketlist item
-        bucketlist_item = self.client.post(
-            "/bucketlists/1/items", headers=dict(Authorization="Bearer " + access_token), data=self.item)
-        result = json.loads(bucketlist_item.data.decode())
-        resp = self.client.get(
-            "/bucketlists/1/items/1",
-            headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn("Standard chartered marathon", str(resp.data))
 
 
 if __name__ == "__main__":
