@@ -1,4 +1,4 @@
-from app import db
+from app.views import db
 from flask_bcrypt import Bcrypt
 import jwt
 from datetime import datetime, timedelta

@@ -67,15 +67,14 @@ class LoginView(MethodView):
                 return make_response(jsonify(response)), 401
 
         except Exception as e:
-            response = {
-                "message": str(e)
-            }
+            response = {"message": str(e)}
             return make_response(jsonify(response)), 500
 
 
 # API resource
 registration_view = RegistrationView.as_view("register_view")
 login_view = LoginView.as_view("login_view")
+
 # Rule for registration with blueprint
 auth_blueprint.add_url_rule("/auth/register", view_func=registration_view,
                             methods=["POST"])
