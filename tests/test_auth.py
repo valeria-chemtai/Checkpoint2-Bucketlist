@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import create_app, db
+from app.views import create_app, db
 
 
 class AuthTestCase(unittest.TestCase):
