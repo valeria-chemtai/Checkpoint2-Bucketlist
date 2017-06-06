@@ -123,7 +123,7 @@ class BucketListItem(db.Model):
     @staticmethod
     def get_all(bucketlist_id):
         # get all the bucketlists items under a given bucketlist
-        return BucketList.query.filter_by(bucketlist_id=bucketlist_id)
+        return BucketListItem.query.filter_by(bucketlist_id=bucketlist_id)
 
     def delete(self):
         # Deletes a given bucketlist item

@@ -166,7 +166,7 @@ def create_app(config_name):
                 response = {"message": message}
                 return make_response(jsonify(response)), 401
 
-    @app.route("/bucketlists/<int:id>/items/int:item_id", methods=["PUT", "GET", "DELETE"])
+    @app.route("/bucketlists/<int:id>/items/<int:item_id>", methods=["PUT", "GET", "DELETE"])
     def bucketlist_item_manipulation(id, item_id, **kwargs):
         auth_header = request.headers.get("Authorization")
         access_token = auth_header.split(" ")[1]
@@ -218,7 +218,7 @@ def create_app(config_name):
 
                     else:
                         # request.method == "DELETE"
-                        # delete the bucketlist using our delete method
+                        # delete the item using our delete method
                         item.delete()
                         return {"message": "item {} deleted".
                                 format(item.id)}, 200

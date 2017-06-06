@@ -86,7 +86,7 @@ class BucketlistTestCase(unittest.TestCase):
             "/bucketlists/1/items/1",
             headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(resp.status_code, 200)
-        self.assertIn("Standard chartered marathon", str(result.data))
+        self.assertIn("Stan Chart", str(result.data))
 
     def test_bucketlist_item_deletion(self):
         """Test bucketlist item can be deleted"""
