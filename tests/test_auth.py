@@ -49,7 +49,7 @@ class AuthTestCase(unittest.TestCase):
         resp = self.client.post("/auth/login", data=self.user_details)
         result = json.loads(resp.data.decode())
         self.assertEqual(result["message"],
-                         "email/username unkown. Register to continue")
+                         "email/username unknown. Register to continue")
         self.assertEqual(resp.status_code, 401)
 
 
