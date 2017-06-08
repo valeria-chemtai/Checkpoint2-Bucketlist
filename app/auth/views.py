@@ -5,6 +5,7 @@ from . import auth_blueprint
 from flask.views import MethodView
 from flask import make_response, request, jsonify
 from app.models import User
+from app.views import db
 
 
 class RegistrationView(MethodView):
@@ -14,7 +15,7 @@ class RegistrationView(MethodView):
         # Query to see if the user already exists
         user_email = User.query.filter_by(email=request.data["email"]).first()
         user_username = User.query.filter_by(
-            email=request.data["username"]).first()
+            username=request.data["username"]).first()
         user = user_email or user_username
 
         if not user:
@@ -47,7 +48,7 @@ class LoginView(MethodView):
     def post(self):
         user_email = User.query.filter_by(email=request.data["email"]).first()
         user_username = User.query.filter_by(
-            email=request.data["username"]).first()
+            username=request.data["username"]).first()
         user = user_email or user_username
 
         try:
@@ -63,7 +64,7 @@ class LoginView(MethodView):
 
             else:
                 response = {
-                    "message": "email/username unkown. Register to continue"}
+                    "message": "email/username unknown. Register to continue"}
                 return make_response(jsonify(response)), 401
 
         except Exception as e:

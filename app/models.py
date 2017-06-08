@@ -8,9 +8,9 @@ from flask import current_app
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(15), unique=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(20))
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(255))
     bucketlists = db.relationship(
         "BucketList", order_by="BucketList.id", cascade="all, delete-orphan",
         lazy="dynamic")
