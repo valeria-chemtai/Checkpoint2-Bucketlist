@@ -59,7 +59,10 @@ def create_app(config_name):
     def bucketlist_manipulation(id, *args, **kwargs):
         # get the access token from the header
         # Get the bucketlist with the id specified from the URL
-        bucketlist = BucketList.query.filter_by(id=id).first()
+        user_id = kwargs["user_id"]
+        bucketlist = BucketList.query.filter_by(
+            id=id, created_by=user_id).first()
+        # filter bucketlist with id and user_id
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
@@ -99,7 +102,9 @@ def create_app(config_name):
     @app.route("/bucketlists/<int:id>/items/", methods=["POST"])
     @decorator.auth_token
     def bucketlist_item(id, **kwargs):
-        bucketlist = BucketList.query.filter_by(id=id).first()
+        user_id = kwargs["user_id"]
+        bucketlist = BucketList.query.filter_by(
+            id=id, created_by=user_id).first()
 
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
@@ -119,10 +124,13 @@ def create_app(config_name):
                 })
                 return make_response(response), 201
 
-    @app.route("/bucketlists/<int:id>/items/<int:item_id>", methods=["PUT", "GET", "DELETE"])
+    @app.route("/bucketlists/<int:id>/items/<int:item_id>",
+               methods=["PUT", "GET", "DELETE"])
     @decorator.auth_token
     def bucketlist_item_manipulation(id, item_id, **kwargs):
-        bucketlist = BucketList.query.filter_by(id=id).first()
+        user_id = kwargs["user_id"]
+        bucketlist = BucketList.query.filter_by(
+            id=id, created_by=user_id).first()
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)

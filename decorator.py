@@ -9,6 +9,9 @@ def auth_token(func):
     @wraps(func)
     def decorator(*args, **kwargs):
         access_token = request.headers.get("Authorization")
+        if not access_token:
+            response = {"message": "Invalid token. Please register or login"}
+            return make_response(jsonify(response)), 401
 
         if access_token:
             # decode token and get the User ID
