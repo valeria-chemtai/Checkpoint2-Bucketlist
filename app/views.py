@@ -84,9 +84,22 @@ def create_app(config_name):
 
         elif request.method == "GET":
             # Fetch the specified bucketlist
+            related_items = BucketListItem.query.filter_by(
+                bucketlist_id=id)
+            results = []
+            for item in related_items:
+                details = {
+                    "id": item.id,
+                    "name": item.name,
+                    "date_created": item.date_created,
+                    "date_modified": item.date_modified,
+                    "done": item.done
+                }
+                results.append(details)
             response = {
                 "id": bucketlist.id,
                 "name": bucketlist.name,
+                "items": results,
                 "date_created": bucketlist.date_created,
                 "date_modified": bucketlist.date_modified,
                 "created_by": bucketlist.created_by
@@ -120,7 +133,8 @@ def create_app(config_name):
                     "name": item.name,
                     "date_created": item.date_created,
                     "date_modified": item.date_modified,
-                    "bucketlist_id": id
+                    "bucketlist_id": id,
+                    "done": item.done
                 })
                 return make_response(response), 201
 
