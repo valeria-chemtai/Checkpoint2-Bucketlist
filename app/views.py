@@ -40,7 +40,10 @@ def create_app(config_name):
 
         else:
             # GET all bucketlist by user
+            limit = request.args.get("limit", 20)
+            page = request.args.get("page", 1)
             q = request.args.get("q", None)
+            limit = 100 if int(limit) > 100 else int(limit)
 
             if q:
                 bucketlists = BucketList.query.filter(
@@ -50,8 +53,10 @@ def create_app(config_name):
                 bucketlists = BucketList.query.filter_by(
                     created_by=user_id)
 
+            bucketlists_pagination = bucketlists.paginate(page, int(limit), False)
+
             results = []
-            for bucketlist in bucketlists:
+            for bucketlist in bucketlists_pagination.items:
                 details = {
                     "id": bucketlist.id,
                     "name": bucketlist.name,
