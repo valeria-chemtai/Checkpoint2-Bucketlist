@@ -40,8 +40,16 @@ def create_app(config_name):
 
         else:
             # GET all bucketlist by user
-            bucketlists = BucketList.query.filter_by(
-                created_by=user_id)
+            q = request.args.get("q", None)
+
+            if q:
+                bucketlists = BucketList.query.filter(
+                    BucketList.name.ilike("%" + q + "%")).filter_by(
+                    created_by=user_id)
+            else:
+                bucketlists = BucketList.query.filter_by(
+                    created_by=user_id)
+
             results = []
             for bucketlist in bucketlists:
                 details = {
