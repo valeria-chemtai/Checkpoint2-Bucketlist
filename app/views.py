@@ -53,7 +53,8 @@ def create_app(config_name):
                 bucketlists = BucketList.query.filter_by(
                     created_by=user_id)
 
-            bucketlists_pagination = bucketlists.paginate(page, int(limit), False)
+            bucketlists_pagination = bucketlists.paginate(page,
+                                                          int(limit), False)
 
             results = []
             for bucketlist in bucketlists_pagination.items:
@@ -70,12 +71,10 @@ def create_app(config_name):
     @app.route("/bucketlists/<int:id>", methods=["GET", "PUT", "DELETE"])
     @decorator.auth_token
     def bucketlist_manipulation(id, *args, **kwargs):
-        # get the access token from the header
-        # Get the bucketlist with the id specified from the URL
         user_id = kwargs["user_id"]
+        # filter bucketlist with id and user_id
         bucketlist = BucketList.query.filter_by(
             id=id, created_by=user_id).first()
-        # filter bucketlist with id and user_id
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
@@ -193,7 +192,7 @@ def create_app(config_name):
                 return make_response(jsonify(response)), 200
 
             else:
-                # delete the item using our delete method
+                # delete the item using delete method
                 item.delete()
                 return {"message": "item {} deleted".
                         format(item.id)}, 200
