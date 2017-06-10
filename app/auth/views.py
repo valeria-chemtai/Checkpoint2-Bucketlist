@@ -1,30 +1,27 @@
 # /app/auth/views.py
-
-from . import auth_blueprint
-
 from flask.views import MethodView
 from flask import make_response, request, jsonify
+
 from app.models import User
-from app.views import db
+from . import auth_blueprint
 
 
 class RegistrationView(MethodView):
     """This class registers a new user."""
 
     def post(self):
+        username = request.data.get("username")
+        email = request.data.get("email")
+        password = request.data.get("password")
         # Query to see if the user already exists
-        user_email = User.query.filter_by(email=request.data["email"]).first()
+        user_email = User.query.filter_by(email=email).first()
         user_username = User.query.filter_by(
-            username=request.data["username"]).first()
+            username=username).first()
         user = user_email or user_username
 
         if not user:
             try:
-                post_data = request.data
                 # Register user
-                username = post_data["username"]
-                email = post_data["email"]
-                password = post_data["password"]
                 user = User(username=username, email=email, password=password)
                 user.save()
 
@@ -35,24 +32,34 @@ class RegistrationView(MethodView):
                 response = {
                     "message": str(e)
                 }
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 500
 
         else:
             response = {"message": "Already Resgistered. Login Please"}
-            return make_response(jsonify(response)), 202
+            return make_response(jsonify(response)), 409
 
 
 class LoginView(MethodView):
     """This class handles user login and access token generation."""
 
     def post(self):
-        user_email = User.query.filter_by(email=request.data["email"]).first()
+        username = request.data.get("username")
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        # Query to see if the user already exists
+        user_email = User.query.filter_by(email=email).first()
         user_username = User.query.filter_by(
-            username=request.data["username"]).first()
+            username=username).first()
         user = user_email or user_username
 
-        try:
-            if user and user.password_is_valid(request.data['password']):
+        if not user:
+            response = {"message":
+                        "login details Unknown. Register First"}
+            return make_response(jsonify(response)), 401
+
+        if user and user.password_is_valid(password):
+            try:
                 # Generate access token to be used as authorization header
                 access_token = user.generate_token(user.id)
                 if access_token:
@@ -62,14 +69,13 @@ class LoginView(MethodView):
                     }
                     return make_response(jsonify(response)), 200
 
-            else:
-                response = {
-                    "message": "email/username unknown. Register to continue"}
-                return make_response(jsonify(response)), 401
-
-        except Exception as e:
-            response = {"message": str(e)}
-            return make_response(jsonify(response)), 500
+            except Exception as e:
+                response = {"message": str(e)}
+                return make_response(jsonify(response)), 500
+        else:
+            response = {"message":
+                        "email/password Combination Invalid"}
+            return make_response(jsonify(response)), 409
 
 
 # API resource

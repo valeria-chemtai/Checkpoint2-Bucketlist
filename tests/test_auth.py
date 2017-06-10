@@ -31,7 +31,7 @@ class AuthTestCase(unittest.TestCase):
         self.client.post("/auth/register", data=self.user_details)
         resp = self.client.post("/auth/register", data=self.user_details)
         result = json.loads(resp.data.decode())
-        self.assertEqual(resp.status_code, 202)
+        self.assertEqual(resp.status_code, 409)
         self.assertEqual(
             result["message"], "Already Resgistered. Login Please")
 
@@ -44,12 +44,23 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(result["message"], "Login Successful")
 
+    def test_login_registered_user_invalid_password(self):
+        """Test registered user with invalid password login response"""
+        self.client.post("/auth/register", data=self.user_details)
+        resp = self.client.post("/auth/login",
+                                data={"email": "newuser@app.com",
+                                      "password": "password1"})
+        result = json.loads(resp.data.decode())
+        self.assertEqual(resp.status_code, 409)
+        self.assertEqual(result["message"],
+                         "email/password Combination Invalid")
+
     def test_login_unregistered_user(self):
         """Test unregistered user can not login"""
         resp = self.client.post("/auth/login", data=self.user_details)
         result = json.loads(resp.data.decode())
         self.assertEqual(result["message"],
-                         "email/username unknown. Register to continue")
+                         "login details Unknown. Register First")
         self.assertEqual(resp.status_code, 401)
 
 
