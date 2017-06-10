@@ -123,7 +123,8 @@ class BucketlistTestCase(unittest.TestCase):
         result = self.client.get(
             "/bucketlists/{}".format(result["id"]),
             headers=dict(Authorization=access_token))
-        self.assertIn("Invalid token. Please register or login", str(resp.data))
+        self.assertIn("Invalid token. Please register or login",
+                      str(resp.data))
         self.assertEqual(resp.status_code, 401)
 
     def test_bucketlist_deletion(self):
