@@ -1,6 +1,6 @@
 import unittest
 import json
-from app.views import create_app, db
+from app import create_app, db
 
 
 class BucketlistTestCase(unittest.TestCase):
@@ -99,6 +99,30 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=access_token))
         self.assertIn("10,000km heart marathon race", str(result.data))
         self.assertEqual(resp.status_code, 200)
+
+    def test_bucketlist_edit_blank_name(self):
+        """Test bucketlist edit with blank name"""
+        self.client.post("/auth/register", data=self.user_details)
+        result = self.client.post("/auth/login", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+
+        bucketlist = self.client.post(
+            "/bucketlists/",
+            headers=dict(Authorization=access_token),
+            data=self.bucketlist)
+        result = json.loads(bucketlist.data.decode())
+
+        # Edit created bucketlist
+        resp = self.client.put(
+            "/bucketlists/{}".format(result["id"]),
+            headers=dict(Authorization=access_token),
+            data={"name": ""})
+        # Get details of edited bucketlist for confirmation
+        result = self.client.get(
+            "/bucketlists/{}".format(result["id"]),
+            headers=dict(Authorization=access_token))
+        self.assertIn("Enter a Valid Name", str(resp.data))
+        self.assertEqual(resp.status_code, 400)
 
     def test_bucketlist_edit_without_auth(self):
         """Test bucketlist can not  be edited without authentication"""

@@ -4,7 +4,7 @@ from functools import wraps
 from app.models import User
 
 
-def auth_token(func):
+def login_required(func):
 
     @wraps(func)
     def decorator(*args, **kwargs):

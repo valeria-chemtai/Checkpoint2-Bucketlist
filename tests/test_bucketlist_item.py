@@ -1,6 +1,6 @@
 import unittest
 import json
-from app.views import create_app, db
+from app import create_app, db
 
 
 class BucketlistTestCase(unittest.TestCase):
@@ -70,6 +70,30 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=access_token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Stan Chart", str(result.data))
+
+    def test_bucketlist_item_edit_blank_name(self):
+        """Test edit bucketlist item by with blank name"""
+        self.client.post("/auth/register", data=self.user_details)
+        # login user
+        result = self.client.post("/auth/login", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+        # create bucketlist
+        self.client.post('/bucketlists/', headers=dict(
+            Authorization=access_token),
+            data=self.bucketlist)
+        # create bucketlist item
+        bucketlist_item = self.client.post(
+            "/bucketlists/1/items/", headers=dict(Authorization=access_token),
+            data=self.item)
+        result = json.loads(bucketlist_item.data.decode())
+        resp = self.client.put(
+            "/bucketlists/1/items/1",
+            headers=dict(Authorization=access_token))
+        result = self.client.get(
+            "/bucketlists/1/items/1",
+            headers=dict(Authorization=access_token))
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("Enter a Valid Name", str(resp.data))
 
     def test_bucketlist_item_deletion(self):
         """Test bucketlist item can be deleted"""
