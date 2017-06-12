@@ -3,10 +3,17 @@ python:
   - "3.6"
 install:
   - pip install -r requirements.txt
+  - "pip install python-coveralls"
 env:
   - DB=postgres
 
-script: nosetests --with-coverage
+before_script:
+  - "./manage.py db init"
+  - "./manage.py db migrate"
+  - "./manage.py db upgrade"
+script: 
+  - nosetests --with-coverage
+  - "coveralls"
 
-after_success:
-  - coveralls
+after_script:
+ - coveralls
