@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import unittest
 from flask_script import Manager
