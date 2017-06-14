@@ -11,7 +11,6 @@ class BucketListItemView(MethodView):
 
     @decorator.login_required
     def post(self, id, user_id):
-        # user_id = kwargs["user_id"]
         bucketlist = BucketList.query.filter_by(
             id=id, created_by=user_id).first()
 
@@ -114,7 +113,7 @@ bucketlist_item_view = BucketListItemView.as_view("bucketlist_item_view")
 item_manipulation_view = BucketListItemManipulationView.as_view(
     "item_manipulation_view")
 
-# Rule for bucketlist with blueprint
+# Rule for bucketlist item with blueprint
 bucketlist_item_blueprint.add_url_rule("/bucketlists/<int:id>/items/",
                                        view_func=bucketlist_item_view,
                                        methods=["POST"])

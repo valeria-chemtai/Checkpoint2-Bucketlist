@@ -44,11 +44,10 @@ class LoginView(MethodView):
 
     def post(self):
         username = request.data.get("username")
-        email = request.data.get("email")
         password = request.data.get("password")
 
         # Query to see if the user already exists
-        user_email = User.query.filter_by(email=email).first()
+        user_email = User.query.filter_by(email=username).first()
         user_username = User.query.filter_by(
             username=username).first()
         user = user_email or user_username
@@ -83,8 +82,8 @@ registration_view = RegistrationView.as_view("register_view")
 login_view = LoginView.as_view("login_view")
 
 # Rule for registration with blueprint
-auth_blueprint.add_url_rule("/auth/register", view_func=registration_view,
+auth_blueprint.add_url_rule("/auth/register/", view_func=registration_view,
                             methods=["POST"])
 # Rule for login with blueprint
-auth_blueprint.add_url_rule("/auth/login", view_func=login_view,
+auth_blueprint.add_url_rule("/auth/login/", view_func=login_view,
                             methods=["POST"])
