@@ -26,6 +26,15 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(result["message"], "Successfully Registered")
         self.assertEqual(resp.status_code, 201)
 
+    def test_register_new_user_with_blank_data(self):
+        """Test error/message displayed with invalid data for registration"""
+        resp = self.client.post("/auth/register",
+                                data={"username": "newuser",
+                                      "email": "newuser@app.com"})
+        result = json.loads(resp.data.decode())
+        self.assertEqual(result["message"], "Password must be non-empty.")
+        self.assertEqual(resp.status_code, 500)
+
     def test_register_already_registered_user(self):
         """Test user can only register once"""
         self.client.post("/auth/register", data=self.user_details)
