@@ -22,8 +22,8 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_item_creation(self):
         """Test bucketlist item creation"""
-        self.client.post("/auth/register", data=self.user_details)
-        result = self.client.post("/auth/login", data=self.user_details)
+        self.client.post("/auth/register/", data=self.user_details)
+        result = self.client.post("/auth/login/", data=self.user_details)
         access_token = json.loads(result.data.decode())["access_token"]
 
         self.client.post(
@@ -39,8 +39,8 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_item_creation_without_bucketlist(self):
         """Test bucketlist item creation with no bucketlist"""
-        self.client.post("/auth/register", data=self.user_details)
-        result = self.client.post("/auth/login", data=self.user_details)
+        self.client.post("/auth/register/", data=self.user_details)
+        result = self.client.post("/auth/login/", data=self.user_details)
         access_token = json.loads(result.data.decode())["access_token"]
         resp = self.client.post("/bucketlists/1/items/", headers=dict(
             Authorization=access_token), data=self.item)
@@ -48,9 +48,9 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_item_edit(self):
         """Test edit bucketlist item by id"""
-        self.client.post("/auth/register", data=self.user_details)
+        self.client.post("/auth/register/", data=self.user_details)
         # login user
-        result = self.client.post("/auth/login", data=self.user_details)
+        result = self.client.post("/auth/login/", data=self.user_details)
         access_token = json.loads(result.data.decode())["access_token"]
         # create bucketlist
         self.client.post('/bucketlists/', headers=dict(
@@ -73,9 +73,9 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_item_edit_blank_name(self):
         """Test edit bucketlist item by with blank name"""
-        self.client.post("/auth/register", data=self.user_details)
+        self.client.post("/auth/register/", data=self.user_details)
         # login user
-        result = self.client.post("/auth/login", data=self.user_details)
+        result = self.client.post("/auth/login/", data=self.user_details)
         access_token = json.loads(result.data.decode())["access_token"]
         # create bucketlist
         self.client.post('/bucketlists/', headers=dict(
@@ -98,9 +98,9 @@ class BucketlistTestCase(unittest.TestCase):
     def test_bucketlist_item_deletion(self):
         """Test bucketlist item can be deleted"""
         # register user
-        self.client.post("/auth/register", data=self.user_details)
+        self.client.post("/auth/register/", data=self.user_details)
         # login user
-        result = self.client.post("/auth/login", data=self.user_details)
+        result = self.client.post("/auth/login/", data=self.user_details)
 
         access_token = json.loads(result.data.decode())["access_token"]
         # create bucketlist
