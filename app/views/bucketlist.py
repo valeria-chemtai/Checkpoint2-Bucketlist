@@ -134,5 +134,5 @@ manipulation_view = BucketListManipulationView.as_view("manipulation_view")
 bucketlist_blueprint.add_url_rule("/bucketlists/", view_func=bucketlist_view,
                                   methods=["POST", "GET"])
 bucketlist_blueprint.add_url_rule(
-    "/bucketlists/<int:id>", view_func=manipulation_view,
+    "/bucketlists/<int:id>/", view_func=manipulation_view,
     methods=["PUT", "GET", "DELETE"])
