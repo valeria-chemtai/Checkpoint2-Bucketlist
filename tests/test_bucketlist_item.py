@@ -62,11 +62,11 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         resp = self.client.put(
-            "/bucketlists/1/items/1",
+            "/bucketlists/1/items/1/",
             headers=dict(Authorization=access_token),
             data={"name": "Stan Chart Marathon"})
         result = self.client.get(
-            "/bucketlists/1/items/1",
+            "/bucketlists/1/items/1/",
             headers=dict(Authorization=access_token))
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Stan Chart", str(result.data))
@@ -87,10 +87,10 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         resp = self.client.put(
-            "/bucketlists/1/items/1",
+            "/bucketlists/1/items/1/",
             headers=dict(Authorization=access_token))
         result = self.client.get(
-            "/bucketlists/1/items/1",
+            "/bucketlists/1/items/1/",
             headers=dict(Authorization=access_token))
         self.assertEqual(resp.status_code, 400)
         self.assertIn("Enter a Valid Name", str(resp.data))
@@ -113,13 +113,13 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.item)
         result = json.loads(bucketlist_item.data.decode())
         # delete created bucketlist item
-        resp = self.client.delete("/bucketlists/1/items/1",
+        resp = self.client.delete("/bucketlists/1/items/1/",
                                   headers=dict(
                                       Authorization=access_token))
         self.assertEqual(resp.status_code, 200)
         # confirm item has been deleted by accessing it
         resp = self.client.get(
-            "/bucketlists/1/items/1", headers=dict(
+            "/bucketlists/1/items/1/", headers=dict(
                 Authorization=access_token))
         self.assertEqual(resp.status_code, 404)
 

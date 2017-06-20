@@ -57,7 +57,7 @@ class AuthTestCase(unittest.TestCase):
         """Test registered user with invalid password login response"""
         self.client.post("/auth/register/", data=self.user_details)
         resp = self.client.post("/auth/login/",
-                                data={"email": "newuser@app.com",
+                                data={"username": "newuser@app.com",
                                       "password": "password1"})
         result = json.loads(resp.data.decode())
         self.assertEqual(resp.status_code, 409)

@@ -118,6 +118,6 @@ bucketlist_item_blueprint.add_url_rule("/bucketlists/<int:id>/items/",
                                        view_func=bucketlist_item_view,
                                        methods=["POST"])
 bucketlist_item_blueprint.add_url_rule(
-    "/bucketlists/<int:id>/items/<int:item_id>",
+    "/bucketlists/<int:id>/items/<int:item_id>/",
     view_func=item_manipulation_view,
     methods=["PUT", "GET", "DELETE"])
