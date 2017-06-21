@@ -2,15 +2,15 @@
 from flask.views import MethodView
 from flask import request, jsonify, abort, make_response
 
-import decorator
+from decorator import login_required
 from app.models import BucketList, BucketListItem
 # from . import bucketlist_blueprint as app
 from . import bucketlist_blueprint
 
 
 class BucketListView(MethodView):
+    decorators = [login_required]
 
-    @decorator.login_required
     def post(self, user_id):
         name = str(request.data.get("name", ""))
         if name:
@@ -25,7 +25,6 @@ class BucketListView(MethodView):
             })
             return make_response(response), 201
 
-    @decorator.login_required
     def get(self, user_id):
         # GET all bucketlist by user
         limit = request.args.get("limit", 20)
@@ -57,7 +56,9 @@ class BucketListView(MethodView):
 
 
 class BucketListManipulationView(MethodView):
-    @decorator.login_required
+
+    decorators = [login_required]
+
     def put(self, id, user_id):
         # filter bucketlist with id and user_id
         bucketlist = BucketList.query.filter_by(
@@ -83,7 +84,6 @@ class BucketListManipulationView(MethodView):
             response = {"message": "Enter a Valid Name"}
             return make_response(jsonify(response)), 400
 
-    @decorator.login_required
     def get(self, id, user_id):
         # Fetch the specified bucketlist
         bucketlist = BucketList.query.filter_by(
@@ -113,7 +113,6 @@ class BucketListManipulationView(MethodView):
         }
         return make_response(jsonify(response)), 200
 
-    @decorator.login_required
     def delete(self, id, user_id):
         bucketlist = BucketList.query.filter_by(
             id=id, created_by=user_id).first()
@@ -135,5 +134,5 @@ manipulation_view = BucketListManipulationView.as_view("manipulation_view")
 bucketlist_blueprint.add_url_rule("/bucketlists/", view_func=bucketlist_view,
                                   methods=["POST", "GET"])
 bucketlist_blueprint.add_url_rule(
-    "/bucketlists/<int:id>", view_func=manipulation_view,
+    "/bucketlists/<int:id>/", view_func=manipulation_view,
     methods=["PUT", "GET", "DELETE"])
