@@ -62,12 +62,13 @@ class BucketlistTestCase(unittest.TestCase):
         self.client.post("/bucketlists/", headers=dict(
             Authorization=access_token),
             data=self.bucketlist)
-        resp = self.client.get("/bucketlists?q=heart",
+        resp = self.client.get("/bucketlists/?q=heart marathon",
                                headers=dict(
                                    Authorization=access_token),
                                )
+
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual("heart marathon", (resp.data))
+        self.assertIn("heart marathon", str(resp.data))
 
     def test_bucketlist_get_by_id(self):
         """Test api can get bucketlist by id"""
