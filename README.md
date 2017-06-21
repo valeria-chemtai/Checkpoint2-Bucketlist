@@ -10,7 +10,7 @@ https://github.com/valeria-chemtai/Checkpoint2-Bucketlist.git
 ```
 Navigate to the root folder
 ```
-cd bucket_list
+cd checkpoint2-Bucketlist
 ```
 Install the requirements
 ```
