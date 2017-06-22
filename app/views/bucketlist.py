@@ -4,7 +4,6 @@ from flask import request, jsonify, abort, make_response
 
 from decorator import login_required
 from app.models import BucketList, BucketListItem
-# from . import bucketlist_blueprint as app
 from . import bucketlist_blueprint
 
 
@@ -12,8 +11,14 @@ class BucketListView(MethodView):
     decorators = [login_required]
 
     def post(self, user_id):
-        name = str(request.data.get("name", ""))
+        name = request.data.get("name", "").strip()
         if name:
+            existing = BucketList.query.filter_by(name=name,
+                                                  created_by=user_id).first()
+            if existing:
+                response = {"message": "Bucketlist exists"}
+                return make_response(jsonify(response)), 409
+
             bucketlist = BucketList(name=name, created_by=user_id)
             bucketlist.save()
             response = jsonify({
@@ -24,6 +29,9 @@ class BucketListView(MethodView):
                 "created_by": user_id
             })
             return make_response(response), 201
+
+        response = {"message": "Bucketlist can not be blank name"}
+        return make_response(jsonify(response)), 400
 
     def get(self, user_id):
         # GET all bucketlist by user
@@ -36,9 +44,9 @@ class BucketListView(MethodView):
             bucketlists = BucketList.query.filter(
                 BucketList.name.ilike("%" + q + "%")).filter_by(
                 created_by=user_id)
-        else:
-            bucketlists = BucketList.query.filter_by(
-                created_by=user_id)
+
+        bucketlists = BucketList.query.filter_by(
+            created_by=user_id)
 
         bucketlists_pagination = bucketlists.paginate(page,
                                                       int(limit), False)
@@ -68,8 +76,15 @@ class BucketListManipulationView(MethodView):
             abort(404)
 
         # Update bucketlist with new name
-        name = str(request.data.get("name", ""))
+        name = request.data.get("name", "").strip()
         if name:
+            existing = BucketList.query.filter_by(
+                name=name, created_by=user_id).first()
+
+            if existing:
+                response = {"message": "Name exists, enter another"}
+                return make_response(jsonify(response)), 409
+
             bucketlist.name = name
             bucketlist.save()
             response = {
@@ -80,9 +95,9 @@ class BucketListManipulationView(MethodView):
                 "created_by": bucketlist.created_by
             }
             return make_response(jsonify(response)), 200
-        else:
-            response = {"message": "Enter a Valid Name"}
-            return make_response(jsonify(response)), 400
+
+        response = {"message": "Enter a Valid Name"}
+        return make_response(jsonify(response)), 400
 
     def get(self, id, user_id):
         # Fetch the specified bucketlist

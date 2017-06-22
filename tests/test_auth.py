@@ -37,7 +37,8 @@ class AuthTestCase(unittest.TestCase):
 
     def test_register_already_registered_user(self):
         """Test user can only register once"""
-        self.client.post("/auth/register/", data=self.user_details)
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
         resp = self.client.post("/auth/register/", data=self.user_details)
         result = json.loads(resp.data.decode())
         self.assertEqual(resp.status_code, 409)
@@ -46,7 +47,8 @@ class AuthTestCase(unittest.TestCase):
 
     def test_login_registered_user(self):
         """Test registered user successful login"""
-        self.client.post("/auth/register/", data=self.user_details)
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
         resp = self.client.post("/auth/login/", data=self.user_details)
         result = json.loads(resp.data.decode())
         self.assertTrue(result['access_token'])
@@ -55,7 +57,8 @@ class AuthTestCase(unittest.TestCase):
 
     def test_login_registered_user_invalid_password(self):
         """Test registered user with invalid password login response"""
-        self.client.post("/auth/register/", data=self.user_details)
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
         resp = self.client.post("/auth/login/",
                                 data={"username": "newuser@app.com",
                                       "password": "password1"})
