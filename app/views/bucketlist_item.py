@@ -18,20 +18,25 @@ class BucketListItemView(MethodView):
             # Raise an HTTPException with a 404 not found status code
             abort(404)
 
-        else:
-            name = str(request.data.get("name", ""))
-            if name:
-                item = BucketListItem(name=name, bucketlist_id=id)
-                item.save()
-                response = jsonify({
-                    "id": item.id,
-                    "name": item.name,
-                    "date_created": item.date_created,
-                    "date_modified": item.date_modified,
-                    "bucketlist_id": id,
-                    "done": item.done
-                })
-                return make_response(response), 201
+        name = request.data.get("name", "").strip()
+        if name:
+            existing = BucketListItem.query.filter_by(name=name,
+                                                      bucketlist_id=id).first()
+            if existing:
+                response = {"message": "Item exists"}
+                return make_response(jsonify(response)), 205
+
+            item = BucketListItem(name=name, bucketlist_id=id)
+            item.save()
+            response = jsonify({
+                "id": item.id,
+                "name": item.name,
+                "date_created": item.date_created,
+                "date_modified": item.date_modified,
+                "bucketlist_id": id,
+                "done": item.done
+            })
+            return make_response(response), 201
 
 
 class BucketListItemManipulationView(MethodView):
@@ -43,15 +48,22 @@ class BucketListItemManipulationView(MethodView):
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
-        else:
-            item = BucketListItem.query.filter_by(id=item_id).first()
+
+        item = BucketListItem.query.filter_by(id=item_id).first()
+
         if not item:
             # Raise an HTTPException
             abort(404)
 
         # Update bucketlist with new name
-        name = str(request.data.get("name", ""))
+        name = request.data.get("name", "").strip()
         if name:
+            existing = BucketListItem.query.filter_by(name=name,
+                                                      bucketlist_id=id).first()
+            if existing:
+                response = {"message": "Name exists, enter another"}
+                return make_response(jsonify(response)), 409
+
             item.name = name
             item.save()
             response = {
@@ -62,9 +74,9 @@ class BucketListItemManipulationView(MethodView):
                 "bucketlist_id": item.bucketlist_id
             }
             return make_response(jsonify(response)), 200
-        else:
-            response = {"message": "Enter a Valid Name"}
-            return make_response(jsonify(response)), 400
+
+        response = {"message": "Enter a Valid Name"}
+        return make_response(jsonify(response)), 400
 
     @decorator.login_required
     def get(self, id, item_id, user_id):
@@ -74,8 +86,9 @@ class BucketListItemManipulationView(MethodView):
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
-        else:
-            item = BucketListItem.query.filter_by(id=item_id).first()
+
+        item = BucketListItem.query.filter_by(id=item_id).first()
+
         if not item:
             # Raise an HTTPException
             abort(404)
@@ -96,8 +109,8 @@ class BucketListItemManipulationView(MethodView):
         if not bucketlist:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
-        else:
-            item = BucketListItem.query.filter_by(id=item_id).first()
+
+        item = BucketListItem.query.filter_by(id=item_id).first()
         if not item:
             # Raise an HTTPException
             abort(404)
