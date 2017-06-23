@@ -19,6 +19,12 @@ class AuthTestCase(unittest.TestCase):
             db.drop_all()
             db.create_all()
 
+    def tearDown(self):
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
+
     def test_register_new_user(self):
         """Test that user registration works"""
         resp = self.client.post("/auth/register/", data=self.user_details)
