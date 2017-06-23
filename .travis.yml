@@ -3,7 +3,7 @@ python:
   - "3.6"
 install:
   - pip install -r requirements.txt
-  - "pip install python-coveralls"
+  - pip install python-coveralls
 env:
   - DB=postgres
 
@@ -12,7 +12,7 @@ before_script:
 
 script: 
   - nosetests --with-coverage
-  - "coveralls"
+  - coveralls
 
-after_script:
+after_success:
  - coveralls
