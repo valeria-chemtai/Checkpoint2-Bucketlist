@@ -12,10 +12,26 @@ Navigate to the root folder
 ```
 cd checkpoint2-Bucketlist
 ```
+create a virtualenv
+```
+mkvirtualenv bucketlist
+```
+Inside virtualenv open a postactivate file to store a script for exporting `App_setting`, `secret key` and `database url` by running the command
+```
+subl $VIRTUAL_ENV/bin/postactivate
+```
+In the postactivate file add the following and replace the parenthesis in database_url with appropriate owner
+```
+export SECRET='akjshdkqiu3ye723y42i34'
+export DATABASE_URL="postgres://{}@localhost:5432/bucketlist"
+export APP_SETTINGS="development"
+```
 Install the requirements
 ```
 pip install -r requirements.txt
 ```
+Create a postgres database called bucketlist using postman, why? its easy
+
 Initialize, migrate, upgrade the datatbase
 ```
 python manage.py db init
