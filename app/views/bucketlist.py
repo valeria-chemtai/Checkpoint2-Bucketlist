@@ -48,7 +48,7 @@ class BucketListView(MethodView):
         bucketlists = BucketList.query.filter_by(
             created_by=user_id)
 
-        bucketlists_pagination = bucketlists.paginate(page,
+        bucketlists_pagination = bucketlists.paginate(int(page),
                                                       int(limit), False)
         results = []
         for bucketlist in bucketlists_pagination.items:

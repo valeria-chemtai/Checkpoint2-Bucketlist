@@ -19,6 +19,12 @@ class BucketlistTestCase(unittest.TestCase):
             db.drop_all()
             db.create_all()
 
+    def tearDown(self):
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
+
     def test_bucketlist_create(self):
         """Test api can create bucketlist"""
         resp = self.client.post("/auth/register/", data=self.user_details)
@@ -30,6 +36,19 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.bucketlist)
         self.assertEqual(resp.status_code, 201)
         self.assertIn("heart marathon", str(resp.data))
+
+    def test_bucketlist_create_with_blank_name(self):
+        """Test api can not create blank bucketlist"""
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
+        result = self.client.post("/auth/login/", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+        resp = self.client.post('/bucketlists/', headers=dict(
+            Authorization=access_token),
+            data={"name": " "})
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("Bucketlist can not be blank name",
+                      str(resp.data))
 
     def test_bucketlist_create_without_auth(self):
         """Test api can not create bucketlist without authentication"""
@@ -135,6 +154,51 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=access_token))
         self.assertIn("10,000km heart marathon race", str(result.data))
         self.assertEqual(resp.status_code, 200)
+
+    def test_bucketlist_edit_with_other_existing_name(self):
+        """Test bucketlist cannot be edited with existing name"""
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
+        result = self.client.post("/auth/login/", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+
+        self.client.post(
+            "/bucketlists/",
+            headers=dict(Authorization=access_token),
+            data={"name": "participate in 10,000km heart marathon race"})
+
+        bucketlist = self.client.post(
+            "/bucketlists/",
+            headers=dict(Authorization=access_token),
+            data=self.bucketlist)
+        result = json.loads(bucketlist.data.decode())
+
+        # Edit created bucketlist
+        resp = self.client.put(
+            "/bucketlists/{}/".format(result["id"]),
+            headers=dict(Authorization=access_token),
+            data={
+                "name": "participate in 10,000km heart marathon race"
+            })
+
+        self.assertIn("Name exists, enter another", str(resp.data))
+        self.assertEqual(resp.status_code, 409)
+
+    def test_nonexistence_bucketlist_edit(self):
+        """Test nonexistence bucketlist can not be edited"""
+        resp = self.client.post("/auth/register/", data=self.user_details)
+        self.assertEqual(resp.status_code, 201)
+        result = self.client.post("/auth/login/", data=self.user_details)
+        access_token = json.loads(result.data.decode())["access_token"]
+
+        resp = self.client.put(
+            "/bucketlists/1/",
+            headers=dict(Authorization=access_token),
+            data={
+                "name": "participate in 10,000km heart marathon race"
+            })
+        # Get details of edited bucketlist for confirmation
+        self.assertEqual(resp.status_code, 404)
 
     def test_bucketlist_edit_blank_name(self):
         """Test bucketlist edit with blank name"""
