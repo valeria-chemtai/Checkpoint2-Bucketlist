@@ -167,10 +167,8 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_item_deletion(self):
         """Test bucketlist item can be deleted"""
-        # register user
         resp = self.client.post("/auth/register/", data=self.user_details)
         self.assertEqual(resp.status_code, 201)
-        # login user
         result = self.client.post("/auth/login/", data=self.user_details)
 
         access_token = json.loads(result.data.decode())["access_token"]
