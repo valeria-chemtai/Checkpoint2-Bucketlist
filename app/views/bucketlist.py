@@ -44,9 +44,9 @@ class BucketListView(MethodView):
             bucketlists = BucketList.query.filter(
                 BucketList.name.ilike("%" + q + "%")).filter_by(
                 created_by=user_id)
-
-        bucketlists = BucketList.query.filter_by(
-            created_by=user_id)
+        else:
+            bucketlists = BucketList.query.filter_by(
+                created_by=user_id)
 
         bucketlists_pagination = bucketlists.paginate(int(page),
                                                       int(limit), False)
