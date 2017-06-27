@@ -49,18 +49,18 @@ Interact with the API, send http requests using Postman
 ## API Endpoints
 | URL Endpoint | HTTP Methods | Summary |
 | -------- | ------------- | --------- |
-| `/auth/register` | `POST`  | Register a new user|
-|  `/auth/login` | `POST` | Login and retrieve token|
-| `/v1/bucketlists` | `POST` | Create a new Bucketlist |
-| `/v1/bucketlists` | `GET` | Retrieve all bucketlists for user |
-| `/v1/bucketlists/?page=1&limit=3` | `GET` | Retrieve three bucketlists per page |
- `/v1/bucketlists/?q=name` | `GET` | searches a bucketlist by the name|
-| `/v1/bucketlists/<id>` | `GET` |  Retrieve a bucketlist by ID|
-| `/v1/bucketlists/<id>` | `PUT` | Update a bucketlist |
-| `/v1/bucketlists/<id>` | `DELETE` | Delete a bucketlist |
-| `/v1/bucketlists/<id>/items` | `POST` |  Create items in a bucketlist |
-| `/v1/bucketlists/<id>/items/<item_id>` | `DELETE`| Delete an item in a bucketlist|
-| `/v1/bucketlists/<id>/items/<item_id>` | `PUT`| update a bucketlist item details|
+| `/auth/register/` | `POST`  | Register a new user|
+|  `/auth/login/` | `POST` | Login and retrieve token|
+| `/bucketlists/` | `POST` | Create a new Bucketlist |
+| `/bucketlists/` | `GET` | Retrieve all bucketlists for user |
+| `/bucketlists/?page=1&limit=3/` | `GET` | Retrieve three bucketlists per page |
+ `/bucketlists/?q=name/` | `GET` | searches a bucketlist by the name|
+| `/bucketlists/<id>/` | `GET` |  Retrieve a bucketlist by ID|
+| `/bucketlists/<id>/` | `PUT` | Update a bucketlist |
+| `/bucketlists/<id>/` | `DELETE` | Delete a bucketlist |
+| `/bucketlists/<id>/items/` | `POST` |  Create items in a bucketlist |
+| `/bucketlists/<id>/items/<item_id>/` | `DELETE`| Delete an item in a bucketlist|
+| `/bucketlists/<id>/items/<item_id>/` | `PUT`| update a bucketlist item details|
 
 ## Testing
 You can run the tests ``` nosetests --with-coverage```
