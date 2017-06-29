@@ -3,7 +3,7 @@
 # Bucketlist API
 According to Merriam-Webster Dictionary,  a Bucket List is a list of things that one has not done before but wants to do before dying.
 
-Bucketlist API is an online flask-resftul API built to help users keep track of their things to do
+Bucketlist API is an online flask API built to help users keep track of their things to do
 
 ## Installation and Setup
 Clone the repo
@@ -14,25 +14,41 @@ Navigate to the root folder
 ```
 cd checkpoint2-Bucketlist
 ```
-create a virtualenv
+create a virtualenv using virtualenvwrapper
 ```
 mkvirtualenv bucketlist
 ```
-Inside virtualenv open a postactivate file to store a script for exporting `App_setting`, `secret key` and `database url` by running the command
+activate virtualenv by running the following
+```
+workon bucketlist
+```
+Inside virtualenv open a postactivate file to store a script for exporting `App_setting`, `secret key` and `database url` variables by running the command
 ```
 subl $VIRTUAL_ENV/bin/postactivate
 ```
-In the postactivate file add the following and replace the parenthesis in database_url with appropriate owner
+In the postactivate file add the following and replace the parenthesis in database_url with appropriate database owner name
 ```
 export SECRET='akjshdkqiu3ye723y42i34'
 export DATABASE_URL="postgres://{}@localhost:5432/bucketlist"
 export APP_SETTINGS="development"
 ```
+Alternatively if you do not want to automate the export of variables using postactivate, a simple export on the command line before running the app will work as follows:
+```
+$ export SECRET='akjshdkqiu3ye723y42i34'
+$ export DATABASE_URL="postgres://{}@localhost:5432/bucketlist"
+$ export APP_SETTINGS="development"
+```
+
 Install the requirements
 ```
 pip install -r requirements.txt
 ```
-Create a postgres database called bucketlist using postman, why? its easy
+Create a postgres database called bucketlist using PgAdmin, why? its easy
+
+Alternatively create the database from the command line by running the script:
+```
+$ createdb bucketlist
+```
 
 Initialize, migrate, upgrade the datatbase
 ```
