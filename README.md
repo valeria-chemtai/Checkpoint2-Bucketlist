@@ -30,13 +30,13 @@ In the postactivate file add the following and replace the parenthesis in databa
 ```
 export SECRET='akjshdkqiu3ye723y42i34'
 export DATABASE_URL="postgres://{}@localhost:5432/bucketlist"
-export APP_SETTINGS="development"
+export FLASK_ENV="development"
 ```
 Alternatively if you do not want to automate the export of variables using postactivate, a simple export on the command line before running the app will work as follows:
 ```
 $ export SECRET='akjshdkqiu3ye723y42i34'
 $ export DATABASE_URL="postgres://{}@localhost:5432/bucketlist"
-$ export APP_SETTINGS="development"
+$ export FLASK_ENV="development"
 ```
 
 Install the requirements
